@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ticket Confirmed</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
+    .ticket-box {
+      background: white; width: 380px; margin: auto; padding: 20px; 
+      border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .ticket-box img {
+      width: 200px; border-radius: 10px; margin-bottom: 15px;
+    }
+    .seat-badge {
+      display: inline-block; background: #222; color: white; padding: 5px 8px;
+      margin: 3px; border-radius: 6px; font-size: 14px;
+    }
+    a.button {
+      display: inline-block; padding: 10px 15px; background: #007bff; 
+      color: white; text-decoration: none; border-radius: 6px; margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticket-box">
+  {% if booking.show.movie.poster %}
+    <img src="{{ booking.show.movie.poster.url }}">
+  {% elif booking.show.movie.poster_url %}
+    <img src="{{ booking.show.movie.poster_url }}">
+  {% endif %}
+
+  <h2>{{ booking.show.movie.title }}</h2>
+
+  <p><strong>{{ booking.show.screen.theatre.name }}</strong></p>
+  <p>Screen {{ booking.show.screen.name }}</p>
+  <p><strong>Time:</strong> {{ booking.show.start_time }}</p>
+
+  <h4>Seats:</h4>
+  {% for seat in booking.seats.all %}
+    <span class="seat-badge">{{ seat.row }}-{{ seat.col }}</span>
+  {% endfor %}
+
+  <p>Booked By: <strong>{{ booking.name }}</strong></p>
+
+  <a href="{% url 'download_ticket' booking.id %}" class="button">Download Ticket PDF</a>
+  <br><br>
+  <a href="/" class="button" style="background:#28a745;">Return Home</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f6f6f6;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .checkout-box {
+      max-width: 600px;
+      background: white;
+      margin: auto;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 5px 18px rgba(0,0,0,0.1);
+    }
+
+    .movie-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .movie-header img {
+      width: 120px;
+      height: 170px;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+
+    .seats {
+      margin-top: 18px;
+      padding: 12px;
+      background: #fff4e5;
+      border-left: 5px solid #ff7b00;
+      border-radius: 6px;
+    }
+
+    .qr-box {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    #timer {
+      font-size: 18px;
+      font-weight: bold;
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .confirm-btn {
+      background: #C21807;
+      padding: 12px 18px;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 17px;
+      margin-top: 18px;
+    }
+
+    .confirm-btn:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="checkout-box">
+
+  <div class="movie-header">
+    {% if show.movie.poster %}
+      <img src="{{ show.movie.poster.url }}">
+    {% elif show.movie.poster_url %}
+      <img src="{{ show.movie.poster_url }}">
+    {% endif %}
+
+    <div>
+      <h2>{{ show.movie.title }}</h2>
+      <p>{{ show.screen.theatre.name }} | Screen {{ show.screen.name }}</p>
+      <p><strong>Show Time:</strong> {{ show.start_time }}</p>
+    </div>
+  </div>
+
+  <div class="seats">
+    <strong>Selected Seats:</strong><br>
+    {% for s in seats %}
+      {{ s.row }}-{{ s.col }}{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+    <br><br>
+    <strong>Total Amount:</strong> ₹{{ amount }}
+  </div>
+
+  <div class="qr-box">
+    <div id="timer">05:00</div>
+    <img src="data:image/png;base64,{{ qr_data }}" width="200"><br>
+    <small>Scan & Pay using UPI</small>
+  </div>
+
+  <form method="POST" action="{% url 'confirm_booking' show.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="selected_seats" value="{% for s in seats %}{{ s.id }},{% endfor %}">
+    <input type="text" name="name" placeholder="Enter Your Name" required style="width:100%;padding:10px;margin-top:15px;border-radius:6px;border:1px solid #aaa;">
+    <button class="confirm-btn">Confirm Booking</button>
+  </form>
+
+</div>
+
+<script>
+  // 5-Minutes Countdown Timer
+  let seconds = 300;
+  let timer = document.getElementById("timer");
+
+  setInterval(function() {
+    if (seconds <= 0) return;
+    seconds--;
+
+    let m = Math.floor(seconds / 60);
+    let s = seconds % 60;
+    timer.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }, 1000);
+</script>
+
+</body>
+</html>

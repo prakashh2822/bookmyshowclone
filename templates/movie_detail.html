@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ movie.title }}</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+    }
+
+    .banner {
+      position: relative;
+      height: 380px;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.45);
+    }
+
+    .movie-info {
+      display: flex;
+      gap: 20px;
+      padding: 25px;
+      margin-top: -120px;
+      position: relative;
+    }
+
+    .movie-info img {
+      width: 250px;
+      height: 360px;
+      object-fit: cover;
+      border-radius: 14px;
+      box-shadow: 0px 8px 25px rgba(0,0,0,0.6);
+    }
+
+    .details h1 {
+      margin-top: 8px;
+      font-size: 34px;
+    }
+
+    .details p {
+      margin-top: 8px;
+      opacity: 0.85;
+      line-height: 1.5;
+    }
+
+    .shows-box {
+      margin-top: 25px;
+      padding: 20px;
+    }
+
+    .show-btn {
+      padding: 10px 16px;
+      margin: 8px;
+      border-radius: 8px;
+      border: none;
+      background-color: #C21807;
+      color: white;
+      text-decoration: none;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    .show-btn:hover {
+      background-color: #a11206;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Banner background -->
+  <div class="banner"
+       style="background-image: url('{% if movie.poster %}{{ movie.poster.url }}{% else %}{{ movie.poster_url }}{% endif %}');">
+  </div>
+
+  <!-- Movie Details -->
+  <div class="movie-info">
+
+    <img src="{% if movie.poster %}{{ movie.poster.url }}{% else %}{{ movie.poster_url }}{% endif %}" alt="Poster">
+
+    <div class="details">
+      <h1>{{ movie.title }}</h1>
+    
+      <p>{{ movie.description }}</p>
+    
+      <p><strong>Duration:</strong> {{ movie.duration_mins }} mins</p>
+    
+      <p><strong>Rating:</strong> ⭐ {{ movie.rating }}/10</p>
+    
+      <p><strong>Language:</strong> {{ movie.language }} | <strong>Genre:</strong> {{ movie.genre }}</p>
+    
+      {% if movie.trailer_url %}
+      <div style="margin-top:20px;">
+        <iframe width="520" height="290"
+                src="{{ movie.trailer_url }}"
+                frameborder="0"
+                allowfullscreen
+                style="border-radius:12px; box-shadow: 0px 4px 18px rgba(0,0,0,0.5);"></iframe>
+      </div>
+      {% endif %}
+    </div>
+    
+
+  </div>
+
+  <!-- Showtimes -->
+  <div class="shows-box">
+    <h2>Available Show Timings:</h2>
+
+    {% if shows %}
+      {% for show in shows %}
+        <a class="show-btn" href="{% url 'show_detail' show.id %}">
+          {{ show.start_time }} | {{ show.screen.theatre.name }}
+        </a>
+      {% endfor %}
+    {% else %}
+      <p>No shows available.</p>
+    {% endif %}
+  </div>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Bookings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 25px;
+    }
+
+    .ticket {
+      background: white;
+      padding: 18px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0px 4px 14px rgba(0,0,0,0.12);
+      border-left: 5px solid #C21807;
+    }
+
+    .ticket h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #C21807;
+    }
+
+    .ticket p {
+      margin: 5px 0;
+    }
+
+    .download-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 8px 14px;
+      background: #C21807;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>My Bookings</h2>
+
+{% for b in bookings %}
+<div class="ticket">
+  <h3>{{ b.show.movie.title }}</h3>
+  <p>Theatre: {{ b.show.screen.theatre.name }} ({{ b.show.screen.name }})</p>
+  <p>Show Time: {{ b.show.start_time }}</p>
+  <p>Seats:
+     {% for s in b.seats.all %}
+        {{ s.row }}-{{ s.col }}{% if not forloop.last %}, {% endif %}
+     {% endfor %}
+  </p>
+  <a class="download-btn" href="{% url 'download_ticket' b.id %}">Download Ticket</a>
+</div>
+{% empty %}
+<p>No bookings yet.</p>
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Seats | {{ show.movie.title }}</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+    }
+  
+    .screen-banner {
+      width: 60%;
+      margin: 20px auto;
+      padding: 10px;
+      background: linear-gradient(90deg, #999, #444);
+      text-align: center;
+      border-radius: 10px;
+      color: white;
+      font-size: 18px;
+      letter-spacing: 2px;
+      font-weight: bold;
+    }
+  
+    .seat-row {
+      margin: 12px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center; /* ✅ Add this */
+    }
+    
+    
+    .seat {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin: 5px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: 0.25s;
+    }
+    
+    /* Available Seats */
+    .available {
+      background: #ffffff;
+      color: #111;
+      border: 2px solid #555;
+    }
+    .available:hover {
+      background: #ff3d3d;
+      border-color: #ff3d3d;
+      color: white;
+      transform: scale(1.18);
+    }
+    
+    /* Selected Seats */
+    .available.selected {
+      background: #1cc700;
+      border-color: #1cc700;
+      color: white;
+      transform: scale(1.15);
+    }
+    
+    /* Booked Seats */
+    .booked {
+      background: #8b0000;
+      border: 2px solid #5a0000;
+      color: white;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+  
+    .legend {
+      margin-top: 20px;
+    }
+  
+    .legend span {
+      display: inline-block;
+      padding: 8px;
+      margin: 0 10px;
+      border-radius: 8px;
+    }
+  
+    .legend .l1 { background: white; border: 2px solid #444; }
+    .legend .l2 { background: #1dbb45; color: white; }
+    .legend .l3 { background: #b40000; color: white; }
+  </style>
+  
+</head>
+<body>
+
+<h1>{{ show.movie.title }}</h1>
+<p>{{ show.screen.theatre.name }} — Screen {{ show.screen.name }}</p>
+
+<div class="screen-banner">SCREEN THIS WAY</div>
+
+<form method="POST" action="{% url 'checkout' show.id %}">
+  {% csrf_token %}
+  <input type="hidden" name="selected_seats" id="selected-seats" />
+
+  <div id="seat-map" style="text-align:center;">
+
+    <!-- Column Numbers -->
+    <div style="margin-bottom:10px;">
+      {% for col in col_range %}
+        <span style="display:inline-block; width:38px; font-weight:bold;">{{ col }}</span>
+      {% endfor %}
+    </div>
+  
+    <!-- Seats with Row Labels -->
+    {% for seat in seats %}
+      {% if forloop.first or forloop.counter0|divisibleby:show.screen.cols %}
+        <div class="seat-row">
+          <span style="font-weight:bold; margin-right:10px;">
+            {{ seat.row_label }}
+          </span>
+      {% endif %}
+  
+      {% if seat.id in booked_seats %}
+        <span class="seat booked">{{ seat.col }}</span>
+      {% else %}
+        <span class="seat available" data-seat-id="{{ seat.id }}">{{ seat.col }}</span>
+      {% endif %}
+  
+      {% if forloop.counter|divisibleby:show.screen.cols %}
+        </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+  
+
+  <button type="submit">Proceed to Payment</button>
+</form>
+
+<a href="{% url 'movie_detail' show.movie.id %}" style="color:white; display:block; margin-top:20px;">Back</a>
+
+<script>
+  let selected = [];
+
+  document.querySelectorAll(".available").forEach(function (seat) {
+    seat.addEventListener("click", function () {
+      const id = this.getAttribute("data-seat-id");
+
+      if (selected.includes(id)) {
+        selected = selected.filter((s) => s !== id);
+        this.classList.remove("selected");
+      } else {
+        selected.push(id);
+        this.classList.add("selected");
+      }
+
+      document.getElementById("selected-seats").value = selected.join(",");
+    });
+  });
+</script>
+
+
+</body>
+</html>
