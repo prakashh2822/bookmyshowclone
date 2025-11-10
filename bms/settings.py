@@ -25,8 +25,7 @@ SECRET_KEY = 'django-insecure-sw*elu4sfn4_x(5-0u4jlw)cso3sta=6msey&3ily0=jhjt+7!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS =  ['bookmyshowclone-production.up.railway.app', '127.0.0.1', 'localhost']
 
 # Application definition
 
