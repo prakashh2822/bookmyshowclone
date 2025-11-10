@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 
 import os
+import dj_database_url
 
 
 
@@ -30,6 +31,17 @@ SECRET_KEY = 'django-insecure-sw*elu4sfn4_x(5-0u4jlw)cso3sta=6msey&3ily0=jhjt+7!
 DEBUG = True
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1,.railway.app").split(",")
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://bookmyshowclone-production.up.railway.app"
+    # tip: you can also add wildcard if you use preview URLs later:
+    # "https://*.up.railway.app"
+]
+
+# If you’re behind a proxy (Railway), tell Django HTTPS is secure
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 # Application definition
 
@@ -124,15 +136,14 @@ STATICFILES_DIRS = [
     BASE_DIR / "core/static"
 ]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://bookmyshowclone-production.up.railway.app',
-]
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
